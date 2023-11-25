@@ -24,7 +24,7 @@ const Messenger = () => {
       <div className="chatBox">
         <div className="chatBoxWrapper">
           {currentChat ? (
-            <MessageBox messages={messages} />
+            <MessageBox currentChat={currentChat} messages={messages} />
           ) : (
             <span>Select a Conversation</span>
           )}

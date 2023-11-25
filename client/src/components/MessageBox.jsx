@@ -1,8 +1,29 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import "./messagebox.css";
 import Bubble from "./Bubble";
+import usePostMessage from "../hooks/usePostMessage";
 
-const MessageBox = ({ messages }) => {
+const MessageBox = ({ currentChat, messages }) => {
+  const [postMessage, isSuccess] = usePostMessage();
+  const [newMessage, setNewMessage] = useState("");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const sendData = {
+      conversation_id: currentChat._id,
+      sender: "rakib",
+      text: newMessage,
+    };
+    postMessage(sendData);
+    setNewMessage("");
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      console.log("Success");
+    }
+  }, [isSuccess]);
+
   return (
     <div className="boxWrapper">
       <div className="boxing">
@@ -15,9 +36,15 @@ const MessageBox = ({ messages }) => {
             />
           ))}
       </div>
-      <form className="sendForm">
-        <input type="text" className="inputSend" placeholder="Type.." />
-        <button>Send</button>
+      <form className="sendForm" onSubmit={handleSubmit}>
+        <input
+          type="text"
+          value={newMessage}
+          onChange={(e) => setNewMessage(e.target.value)}
+          className="inputSend"
+          placeholder="Type.."
+        />
+        <button type="submit">Send</button>
       </form>
     </div>
   );
