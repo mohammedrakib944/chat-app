@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 
 const usePostMessage = () => {
   const [data, setData] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
   async function postMessage() {
     if (!data) return;
     try {
@@ -12,7 +11,6 @@ const usePostMessage = () => {
         url: "http://localhost:8000/api/message/",
         data,
       });
-      setIsSuccess(true);
     } catch (error) {
       console.log("Error: ", error);
     }
@@ -21,7 +19,7 @@ const usePostMessage = () => {
     postMessage();
   }, [data]);
 
-  return [setData, isSuccess];
+  return setData;
 };
 
 export default usePostMessage;

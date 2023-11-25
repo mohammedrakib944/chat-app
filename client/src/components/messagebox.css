@@ -13,7 +13,7 @@
 .own {
   width: fit-content;
   max-width: 300px;
-  padding: 10px;
+  padding: 10px 20px;
   border-radius: 10px;
   margin-top: 2px;
   background-color: rgb(0, 119, 255);

@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./messagebox.css";
 import Bubble from "./Bubble";
 import usePostMessage from "../hooks/usePostMessage";
 
 const MessageBox = ({ currentChat, messages }) => {
-  const [postMessage, isSuccess] = usePostMessage();
+  const postMessage = usePostMessage();
   const [newMessage, setNewMessage] = useState("");
 
   const handleSubmit = (e) => {
@@ -17,12 +17,6 @@ const MessageBox = ({ currentChat, messages }) => {
     postMessage(sendData);
     setNewMessage("");
   };
-
-  useEffect(() => {
-    if (isSuccess) {
-      console.log("Success");
-    }
-  }, [isSuccess]);
 
   return (
     <div className="boxWrapper">
