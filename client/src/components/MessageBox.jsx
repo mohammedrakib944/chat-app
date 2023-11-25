@@ -3,18 +3,17 @@ import "./messagebox.css";
 import Bubble from "./Bubble";
 
 const MessageBox = ({ messages }) => {
-  //   console.log("Messages: ", messages);
   return (
     <div className="boxWrapper">
       <div className="boxing">
-        <Bubble />
-        <Bubble own />
-        <Bubble own />
-        <Bubble />
-        <Bubble />
-        <Bubble />
-        <Bubble own />
-        <Bubble own />
+        {messages &&
+          messages.map((message) => (
+            <Bubble
+              key={message?._id}
+              message={message}
+              own={message.sender === "rakib"}
+            />
+          ))}
       </div>
       <form className="sendForm">
         <input type="text" className="inputSend" placeholder="Type.." />

@@ -1,12 +1,12 @@
 import React from "react";
 import "./messagebox.css";
 
-const Bubble = ({ own }) => {
+const Bubble = ({ message, own }) => {
   return (
     <div className="bubble">
       <div className={`chat ${own && "ownChat"}`}>
-        <div className="name">Rakib</div>
-        <div className={`${own ? "own" : "text"}`}>Hi There how are you?</div>
+        <div className="name">{message?.sender}</div>
+        <div className={`${own ? "own" : "text"}`}>{message?.text}</div>
       </div>
     </div>
   );

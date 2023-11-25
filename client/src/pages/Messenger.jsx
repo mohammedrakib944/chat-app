@@ -10,8 +10,6 @@ const Messenger = () => {
   const conversations = useGetConversations();
   const messages = useGetMessages({ conversation_id: currentChat?._id });
 
-  // console.log("Messages: ", messages);
-
   return (
     <div className="messenger">
       <div className="chatMenu">
