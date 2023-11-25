@@ -40,6 +40,7 @@
   padding: 0px 30px;
   display: flex;
   gap: 4px;
+  padding-top: 10px;
 }
 .inputSend {
   width: 100%;

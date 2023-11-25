@@ -15,13 +15,6 @@ const MessageBox = ({ messages }) => {
         <Bubble />
         <Bubble own />
         <Bubble own />
-        <Bubble own />
-        <Bubble own />
-        <Bubble own />
-        <Bubble own />
-        <Bubble own />
-        <Bubble own />
-        <Bubble own />
       </div>
       <form className="sendForm">
         <input type="text" className="inputSend" placeholder="Type.." />

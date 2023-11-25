@@ -6,7 +6,7 @@ const useGetConversations = () => {
   async function getData() {
     try {
       const res = await axios.get(
-        "http://localhost:8000/api/conversation/rakib"
+        "http://localhost:8000/api/conversation/shohan  "
       );
       setConversation(res.data);
     } catch (error) {
