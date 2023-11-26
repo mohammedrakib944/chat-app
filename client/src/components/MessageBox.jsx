@@ -4,7 +4,7 @@ import Bubble from "./Bubble";
 import usePostMessage from "../hooks/usePostMessage";
 import { useUserContext } from "../context/userContext";
 
-const MessageBox = ({ currentChat, messages }) => {
+const MessageBox = ({ socket, currentChat, chats, setChats }) => {
   const { user } = useUserContext();
   const postMessage = usePostMessage();
   const [newMessage, setNewMessage] = useState("");
@@ -17,20 +17,33 @@ const MessageBox = ({ currentChat, messages }) => {
       sender: user,
       text: newMessage,
     };
+
+    // Find the receiver username
+    const receiverUsername = currentChat.members.find(
+      (member) => member !== user
+    );
+
+    // send to socket server
+    socket.current.emit("send:message", {
+      senderId: user,
+      receiverUsername,
+      text: newMessage,
+    });
+    // send to mongoDB
     postMessage(sendData);
-    messages.push(sendData);
+    setChats((prev) => [...prev, sendData]);
     setNewMessage("");
   };
 
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages, handleSubmit]);
+  }, [chats, handleSubmit]);
 
   return (
     <div className="boxWrapper">
       <div className="boxing">
-        {messages &&
-          messages.map((message, index) => (
+        {chats &&
+          chats.map((message, index) => (
             <div ref={scrollRef} key={index}>
               <Bubble message={message} own={message.sender === user} />
             </div>

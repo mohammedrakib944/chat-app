@@ -20,18 +20,29 @@ const initializeSocket = (server) => {
     users = users.filter((user) => user.socketId !== socketId);
   };
 
-  io.on("connection", (socket) => {
-    console.log("a user is connected.");
+  // get user
+  const getUser = (userId) => {
+    return users.find((user) => user.userId === userId);
+  };
 
+  io.on("connection", (socket) => {
     // add new user and send all users to client
     socket.on("add:user", (userId) => {
       addUser(userId, socket.id);
       io.emit("get:users", users);
     });
 
+    // send and get message
+    socket.on("send:message", ({ senderId, receiverUsername, text }) => {
+      const receiver = getUser(receiverUsername);
+      io.to(receiver.socketId).emit("get:message", {
+        senderId,
+        text,
+      });
+    });
+
     // remove disconnected user
     socket.on("disconnect", () => {
-      console.log("a user is disconnected.");
       removeUser(socket.id);
       io.emit("get:users", users);
     });
