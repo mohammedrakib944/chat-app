@@ -26,7 +26,6 @@ const Messenger = () => {
         // console.log("Users:", users);
       });
       socket.current.on("get:message", (data) => {
-        console.log("Receive:", data);
         setChats((prev) => [...prev, data]);
       });
     }
