@@ -1,14 +1,29 @@
 import "./messenger.css";
 import Conversation from "../components/Conversations";
 import useGetConversations from "../hooks/useGetConversations";
-import { useState } from "react";
 import MessageBox from "../components/MessageBox";
 import useGetMessages from "../hooks/useGetMessages";
+import { useEffect, useState } from "react";
+import { io } from "socket.io-client";
 
 const Messenger = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const conversations = useGetConversations();
   const messages = useGetMessages({ conversation_id: currentChat?._id });
+  const [socketIo, setSocketIo] = useState(null);
+
+  useEffect(() => {
+    const socket = io("http://localhost:8000");
+    setSocketIo(socket);
+  }, []);
+
+  useEffect(() => {
+    if (socketIo) {
+      socketIo.on("welcome", (message) => {
+        console.log("From socket: ", message);
+      });
+    }
+  }, [socketIo]);
 
   return (
     <div className="messenger">
