@@ -34,11 +34,14 @@ const initializeSocket = (server) => {
 
     // send and get message
     socket.on("send:message", ({ senderId, receiverUsername, text }) => {
+      // for socket_id
       const receiver = getUser(receiverUsername);
-      io.to(receiver.socketId).emit("get:message", {
-        senderId,
-        text,
-      });
+      if (receiver) {
+        io.to(receiver.socketId).emit("get:message", {
+          senderId,
+          text,
+        });
+      }
     });
 
     // remove disconnected user
