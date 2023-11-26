@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import "./messagebox.css";
 import Bubble from "./Bubble";
 import usePostMessage from "../hooks/usePostMessage";
+import { useUserContext } from "../context/userContext";
 
 const MessageBox = ({ currentChat, messages }) => {
+  const { user } = useUserContext();
   const postMessage = usePostMessage();
   const [newMessage, setNewMessage] = useState("");
   const scrollRef = useRef();
@@ -12,7 +14,7 @@ const MessageBox = ({ currentChat, messages }) => {
     e.preventDefault();
     const sendData = {
       conversation_id: currentChat._id,
-      sender: "tomal",
+      sender: user,
       text: newMessage,
     };
     postMessage(sendData);
@@ -30,7 +32,7 @@ const MessageBox = ({ currentChat, messages }) => {
         {messages &&
           messages.map((message, index) => (
             <div ref={scrollRef} key={index}>
-              <Bubble message={message} own={message.sender === "tomal"} />
+              <Bubble message={message} own={message.sender === user} />
             </div>
           ))}
       </div>

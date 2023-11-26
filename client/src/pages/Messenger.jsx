@@ -3,33 +3,35 @@ import Conversation from "../components/Conversations";
 import useGetConversations from "../hooks/useGetConversations";
 import MessageBox from "../components/MessageBox";
 import useGetMessages from "../hooks/useGetMessages";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
+import { useUserContext } from "../context/userContext";
 
 const Messenger = () => {
+  const { user } = useUserContext();
   const [currentChat, setCurrentChat] = useState(null);
   const conversations = useGetConversations();
   const messages = useGetMessages({ conversation_id: currentChat?._id });
-  const [socketIo, setSocketIo] = useState(null);
+  const socket = useRef();
 
   useEffect(() => {
-    const socket = io("http://localhost:8000");
-    setSocketIo(socket);
+    socket.current = io("http://localhost:8000");
   }, []);
 
   useEffect(() => {
-    if (socketIo) {
-      socketIo.on("welcome", (message) => {
-        console.log("From socket: ", message);
+    if (socket.current) {
+      socket.current.emit("add:user", user);
+      socket.current.on("get:users", (users) => {
+        console.log("Users: ", users);
       });
     }
-  }, [socketIo]);
+  }, [socket]);
 
   return (
     <div className="messenger">
       <div className="chatMenu">
         <div className="chatMenuWrapper">
-          <p className="header-text">All Conversations</p>
+          <p className="header-text">{user} - Conversations</p>
           <Conversation
             conversation={conversations}
             setCurrentChat={setCurrentChat}
@@ -41,7 +43,7 @@ const Messenger = () => {
           {currentChat ? (
             <MessageBox currentChat={currentChat} messages={messages} />
           ) : (
-            <span>Select a Conversation</span>
+            <div className="itemcenter">Select a Conversation</div>
           )}
         </div>
       </div>
