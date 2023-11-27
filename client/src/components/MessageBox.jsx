@@ -8,14 +8,32 @@ const MessageBox = ({ socket, currentChat, chats, setChats }) => {
   const { user } = useUserContext();
   const postMessage = usePostMessage();
   const [newMessage, setNewMessage] = useState("");
+  const [file, setFile] = useState(null);
   const scrollRef = useRef();
+
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    let fileData = null;
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const fileDatas = event.target.result;
+        fileData = fileDatas;
+      };
+      reader.readAsDataURL(file);
+    }
+
     const sendData = {
       conversation_id: currentChat._id,
       sender: user,
       text: newMessage,
+      file,
     };
 
     // Find the receiver username
@@ -28,6 +46,7 @@ const MessageBox = ({ socket, currentChat, chats, setChats }) => {
       senderId: user,
       receiverUsername,
       text: newMessage,
+      file,
     });
     // send to mongoDB
     postMessage(sendData);
@@ -50,6 +69,7 @@ const MessageBox = ({ socket, currentChat, chats, setChats }) => {
           ))}
       </div>
       <form className="sendForm" onSubmit={handleSubmit}>
+        <input type="file" onChange={handleFileChange} id="fileselect" />
         <input
           type="text"
           value={newMessage}

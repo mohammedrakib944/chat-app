@@ -33,13 +33,14 @@ const initializeSocket = (server) => {
     });
 
     // send and get message
-    socket.on("send:message", ({ senderId, receiverUsername, text }) => {
+    socket.on("send:message", ({ senderId, receiverUsername, text, file }) => {
       // for socket_id
       const receiver = getUser(receiverUsername);
       if (receiver) {
         io.to(receiver.socketId).emit("get:message", {
           senderId,
           text,
+          file,
         });
       }
     });

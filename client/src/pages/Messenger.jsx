@@ -12,6 +12,7 @@ const Messenger = () => {
   const [currentChat, setCurrentChat] = useState(null);
   const [chats, setChats] = useState(null);
   const conversations = useGetConversations();
+  const [imageFile, setImageFile] = useState(null);
   const socket = useRef();
   let messages = useGetMessages({ conversation_id: currentChat?._id });
 
@@ -27,13 +28,33 @@ const Messenger = () => {
       });
       socket.current.on("get:message", (data) => {
         setChats((prev) => [...prev, data]);
+        // Create a blob
+        const blob = new Blob([data.file], { type: "image/png" });
+
+        // Create a preview URL
+        const previewUrl = URL.createObjectURL(blob);
+        // Set image data for rendering
+        setImageFile({
+          previewUrl,
+          downloadUrl: URL.createObjectURL(blob),
+        });
       });
     }
   }, [socket]);
 
+  const handleDownload = () => {
+    // Trigger a click on a hidden download link to start the download
+    const downloadLink = document.createElement("a");
+    downloadLink.href = imageFile.downloadUrl;
+    downloadLink.download = "downloaded-file.png";
+    downloadLink.click();
+  };
+
   useEffect(() => {
     setChats(messages);
   }, [messages]);
+
+  console.log("Image: ", imageFile);
 
   return (
     <div className="messenger">
@@ -44,6 +65,16 @@ const Messenger = () => {
             conversation={conversations}
             setCurrentChat={setCurrentChat}
           />
+          {imageFile && (
+            <div>
+              <img
+                src={imageFile.previewUrl}
+                alt="Preview"
+                style={{ width: 300, height: 200, objectFit: "cover" }}
+              />
+              <button onClick={handleDownload}>Download</button>
+            </div>
+          )}
         </div>
       </div>
       <div className="chatBox">
