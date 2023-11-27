@@ -27,34 +27,32 @@ const Messenger = () => {
         // console.log("Users:", users);
       });
       socket.current.on("get:message", (data) => {
-        setChats((prev) => [...prev, data]);
-        // Create a blob
-        const blob = new Blob([data.file], { type: "image/png" });
+        if (data.file) {
+          // Create a blob
+          const blob = new Blob([data.file], { type: "image/png" });
 
-        // Create a preview URL
-        const previewUrl = URL.createObjectURL(blob);
-        // Set image data for rendering
-        setImageFile({
-          previewUrl,
-          downloadUrl: URL.createObjectURL(blob),
-        });
+          // Create a preview URL
+          const previewUrl = URL.createObjectURL(blob);
+          // Set image data for rendering
+          // setImageFile({
+          //   previewUrl,
+          //   downloadUrl: URL.createObjectURL(blob),
+          // });
+          const savedData = {
+            ...data,
+            image: previewUrl,
+          };
+          setChats((prev) => [...prev, savedData]);
+        } else {
+          setChats((prev) => [...prev, data]);
+        }
       });
     }
   }, [socket]);
 
-  const handleDownload = () => {
-    // Trigger a click on a hidden download link to start the download
-    const downloadLink = document.createElement("a");
-    downloadLink.href = imageFile.downloadUrl;
-    downloadLink.download = "downloaded-file.png";
-    downloadLink.click();
-  };
-
   useEffect(() => {
     setChats(messages);
   }, [messages]);
-
-  console.log("Image: ", imageFile);
 
   return (
     <div className="messenger">
@@ -65,7 +63,7 @@ const Messenger = () => {
             conversation={conversations}
             setCurrentChat={setCurrentChat}
           />
-          {imageFile && (
+          {/* {imageFile && (
             <div>
               <img
                 src={imageFile.previewUrl}
@@ -74,7 +72,7 @@ const Messenger = () => {
               />
               <button onClick={handleDownload}>Download</button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
       <div className="chatBox">

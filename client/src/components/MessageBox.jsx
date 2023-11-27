@@ -19,15 +19,7 @@ const MessageBox = ({ socket, currentChat, chats, setChats }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    let fileData = null;
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const fileDatas = event.target.result;
-        fileData = fileDatas;
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!newMessage) return;
 
     const sendData = {
       conversation_id: currentChat._id,
@@ -49,9 +41,20 @@ const MessageBox = ({ socket, currentChat, chats, setChats }) => {
       file,
     });
     // send to mongoDB
-    postMessage(sendData);
-    setChats((prev) => [...prev, sendData]);
+    // postMessage(sendData);
+
+    // Update the chats state
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setChats((prev) => [...prev, { ...sendData, image: reader.result }]);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setChats((prev) => [...prev, sendData]);
+    }
     setNewMessage("");
+    setFile(null);
   };
 
   useEffect(() => {
@@ -68,8 +71,18 @@ const MessageBox = ({ socket, currentChat, chats, setChats }) => {
             </div>
           ))}
       </div>
+      {file && <span className="file-att">1 file attached</span>}
       <form className="sendForm" onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} id="fileselect" />
+        <label htmlFor="fileselect" className="addFile">
+          +
+        </label>
+        <input
+          style={{ display: "none" }}
+          type="file"
+          accept="image/png, image/jpg, image/jpeg"
+          onChange={handleFileChange}
+          id="fileselect"
+        />
         <input
           type="text"
           value={newMessage}
